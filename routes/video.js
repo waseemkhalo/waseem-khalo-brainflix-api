@@ -12,8 +12,6 @@ router.get("/videos", (req, res) => {
 
 })
 
-
-
 router.get("/videos/:videoId",(req,res)=>{
 
     //req.params is an object with all URL params
@@ -28,6 +26,4 @@ router.get("/videos/:videoId",(req,res)=>{
     }
     res.json(video);
 });
-
-
 module.exports = router;
