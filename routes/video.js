@@ -10,18 +10,52 @@ router.get("/videos", (req, res) => {
     const videos = JSON.parse(videosJSON);
     res.json(videos)
 
-})
+    console.log(videos)
 
-router.get("/videos/:videoId",(req,res)=>{
+    const newArray = videos.map((item) => {
+         delete item.description;
+         return item;        
+        });
+    console.log(newArray)
+
+
+
+});
+
+// adding a new video to JSON
+router.post("/videos", (req, res) => {
+
+
+    const video = req.body;
+
+
+    video.id = uuidv4();
+
+    const videosJSON = fs.readFileSync("./data/videos.json");
+
+    let videos = JSON.parse(videosJSON);
+
+    videos.push(video);
+
+    fs.writeFileSync("./data/videos.json", JSON.stringify(videos));
+
+    res.status(201).json(video);
+
+
+
+});
+
+
+router.get("/videos/:videoId", (req, res) => {
 
     //req.params is an object with all URL params
     const id = req.params.videoId;
     const videosJSON = fs.readFileSync("./data/videos.json");
     const videos = JSON.parse(videosJSON);
-    const video = videos.find( video=> video.id === id );
+    const video = videos.find(video => video.id === id);
 
     //dealing w/ invalid videoId - example http://localhost:8080/videos/004
-    if(video === undefined){
+    if (video === undefined) {
         return res.status(404).send(`Video ${id} was not found`);
     }
     res.json(video);
