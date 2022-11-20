@@ -8,17 +8,21 @@ const { v4: uuidv4 } = require("uuid");
 router.get("/videos", (req, res) => {
     const videosJSON = fs.readFileSync('./data/videos.json')
     const videos = JSON.parse(videosJSON);
-    res.json(videos)
+    
 
-    console.log(videos)
+    const newVideoArray = videos.map((item) => {
+        delete item.description;
+        delete item.views;
+        delete item.likes;
+        delete item.duration;
+        delete item.video;
+        delete item.timestamp;
+        delete item.comments;
+        return item;
+       });
+    
 
-    const newArray = videos.map((item) => {
-         delete item.description;
-         return item;        
-        });
-    console.log(newArray)
-
-
+    res.json(newVideoArray)
 
 });
 
