@@ -5,10 +5,12 @@ const fs = require('fs');
 const { v4: uuidv4 } = require("uuid");
 
 
+
+
 router.get("/videos", (req, res) => {
+
     const videosJSON = fs.readFileSync('./data/videos.json')
     const videos = JSON.parse(videosJSON);
-    
 
     const newVideoArray = videos.map((item) => {
         delete item.description;
@@ -19,32 +21,63 @@ router.get("/videos", (req, res) => {
         delete item.timestamp;
         delete item.comments;
         return item;
-       });
-    
+    });
+
 
     res.json(newVideoArray)
 
 });
 
+
+
 // adding a new video to JSON
 router.post("/videos", (req, res) => {
 
+    // console.log(req.body)
 
-    const video = req.body;
+    // const newVideo = req.body;
+    const {title, description} = req.body;
 
+    // newVideo.id = uuidv4();
+    // newVideo.image = '../public/images/Upload-video-preview.jpg' 
 
-    video.id = uuidv4();
+    const newVideo = {
+        id: uuidv4(),
+        title,
+        description,
+        channel: 'BrainStation',
+        image: 'http://localhost:8080/uploadphoto',
+        views: "7,837,092,284",
+        likes: "7,837,092,284",
+        duration: "1:00",
+        timestamp: 1632344461000,
+        comments: [
+            {
+                id: "2d818087-c1f4-4ec2-bcdc-b545fd6ec258",
+                name: "Martin Evergreen",
+                comment: "I’ve loved trains ever since I was a child. I dreamed about riding one around the world. This is the most fantastic thing I’ve seen yet, and I’m watching it ON a train!",
+                likes: 3,
+                timestamp: 1632512763000
+            },
+            {
+                id: "191de346-b3c2-47b4-bf5b-6db90d1e3bdc",
+                name: "Emily Harper",
+                comment: "Let’s collaborate on a video for saving money on cheap train tickets! I’ll have my associates contact yours.",
+                likes: 0,
+                timestamp: 1632496261000
+            }
+        ]
+    };
 
     const videosJSON = fs.readFileSync("./data/videos.json");
+    const videos = JSON.parse(videosJSON);
+    console.log(videos)
 
-    let videos = JSON.parse(videosJSON);
+  
+    videos.push(newVideo);
+    fs.writeFileSync('./data/videos.json', JSON.stringify(videos));
 
-    videos.push(video);
-
-    fs.writeFileSync("./data/videos.json", JSON.stringify(videos));
-
-    res.status(201).json(video);
-
+    res.json(newVideo);
 
 
 });
@@ -52,7 +85,6 @@ router.post("/videos", (req, res) => {
 
 router.get("/videos/:videoId", (req, res) => {
 
-    //req.params is an object with all URL params
     const id = req.params.videoId;
     const videosJSON = fs.readFileSync("./data/videos.json");
     const videos = JSON.parse(videosJSON);
